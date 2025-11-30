@@ -15,3 +15,6 @@ matplotlib\
 tqdm\
 Pillow\
 }
+
+esmnr yaptiklari:
+dataseti ekledim, Python 3.11.9 indirdim, matplotlib indirdim, gpu kontrolu ekledim, 
