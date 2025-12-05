@@ -16,9 +16,7 @@ from sklearn.metrics import classification_report, confusion_matrix, ConfusionMa
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 
-# ==============================
 # 0. Config
-# ==============================
 DATA_DIR = "data/Dog Emotion"       # labels.csv + görüntülerin bulunduğu ana klasör
 LABELS_CSV = "labels.csv"           # DATA_DIR altında
 OUTPUT_DIR = "outputs"
@@ -30,19 +28,8 @@ NUM_EPOCHS = 50
 LEARNING_RATE = 1e-3
 WEIGHT_DECAY = 1e-4  # L2 regularization
 
-
-# ==============================
 # 1. Reproducibility
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-# ==============================
-def set_seed(seed: int = 42):
-=======
-def set_seed(seed: int = 42):                                   # zar atma olayini sabitliyorum
->>>>>>> Stashed changes
-=======
-def set_seed(seed: int = 42):                                   # zar atma olayini sabitliyorum
->>>>>>> Stashed changes
+def set_seed(seed: int = 42):                                                            # zar atma olayini sabitliyorum
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
@@ -55,19 +42,8 @@ def set_seed(seed: int = 42):                                   # zar atma olayi
 
 set_seed(42)
 
-
-# ==============================
 # 2. Baseline model (Tiny CNN)
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-# ==============================
-class TinyBaselineCNN(nn.Module):
-=======
-class TinyBaselineCNN(nn.Module):                                   # veri akisi saglaniyor mu diye kontrol amacli basit model kurdum 
->>>>>>> Stashed changes
-=======
-class TinyBaselineCNN(nn.Module):                                   # veri akisi saglaniyor mu diye kontrol amacli basit model kurdum 
->>>>>>> Stashed changes
+class TinyBaselineCNN(nn.Module):                                                        # veri akisi saglaniyor mu diye kontrol amacli basit model kurdum 
     """
     Çok basit, 2 convolution katmanlı baseline model.
     Sadece karşılaştırma için kullanılıyor.
@@ -93,27 +69,24 @@ class TinyBaselineCNN(nn.Module):                                   # veri akisi
         x = x.view(x.size(0), -1)
         return self.fc(x)
 
-
-# ==============================
 # 3. Ana model
-# ==============================
-class SimpleCNN(nn.Module):
+class SimpleCNN(nn.Module):                                                                    
     def __init__(self, num_classes: int = 4):
         super(SimpleCNN, self).__init__()
 
         self.features = nn.Sequential(
             # Block 1
-            nn.Conv2d(3, 32, kernel_size=3, padding=1),                             # kenar koseleri tespit ediyorum
-            nn.BatchNorm2d(32),                                                     # trainingde sayıların çok büyümesini veya küçülmesini engelliyorum
-            nn.ReLU(inplace=True),                                                  # non linear lik ekliyorum
-            nn.MaxPool2d(2),  # 128 -> 64                                           # resmi yarıya indiriyorum
+            nn.Conv2d(3, 32, kernel_size=3, padding=1),                                 # kenar koseleri tespit ediyorum 
+            nn.BatchNorm2d(32),                                                         # trainingde sayıların çok büyümesini veya küçülmesini engelliyorum      
+            nn.ReLU(inplace=True),                                                      # non linear lik ekliyorum
+            nn.MaxPool2d(2),  # 128 -> 64                                               # resmi yarıya indiriyorum
 
             # Block 2
             nn.Conv2d(32, 64, kernel_size=3, padding=1),
             nn.BatchNorm2d(64),
             nn.ReLU(inplace=True),
             nn.MaxPool2d(2),  # 64 -> 32
-
+ 
             # Block 3
             nn.Conv2d(64, 128, kernel_size=3, padding=1),
             nn.BatchNorm2d(128),
@@ -127,7 +100,7 @@ class SimpleCNN(nn.Module):
             nn.MaxPool2d(2),  # 16 -> 8
         )
 
-        self.dropout = nn.Dropout(p=0.5)                                            # overfittingi engellemek icin noronlarin yarisini egitim sirasinda kapatiyorum
+        self.dropout = nn.Dropout(p=0.5)                                                 # overfittingi engellemek icin noronlarin yarisini egitim sirasinda kapatiyorum
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
         self.classifier = nn.Linear(256, num_classes)
 
@@ -139,10 +112,7 @@ class SimpleCNN(nn.Module):
         x = self.classifier(x)
         return x
 
-
-# ==============================
 # 4. Device seçimi
-# ==============================
 if torch.backends.mps.is_available():
     device = torch.device("mps")
 elif torch.cuda.is_available():
@@ -152,10 +122,7 @@ else:
 
 print("Using device:", device)
 
-
-# ==============================
 # 5. Dataset
-# ==============================
 class DogEmotionDataset(Dataset):
     def __init__(self, csv_path, root_dir, transform=None):
         """
@@ -197,9 +164,6 @@ class DogEmotionDataset(Dataset):
             image = self.transform(image)
 
         return image, label
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-
 
 # ==============================
 # 6. Dataloaders
@@ -250,9 +214,3 @@ def get_dataloaders():
     idx_to_class = full_dataset.idx_to_label
 
     return train_loader, val_loader, test_loader, idx_to_class
-=======
-    
->>>>>>> Stashed changes
-=======
-    
->>>>>>> Stashed changes
