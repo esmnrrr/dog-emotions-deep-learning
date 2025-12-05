@@ -1,2 +1,141 @@
 # dog-emotions-deep-learning
 
+ilk sonuclar:
+
+Toplam resim sayisi: 4000
+Siniflar: ['angry', 'happy', 'relaxed', 'sad']
+DogEmotionCNN(
+  (conv1): Sequential(
+    (0): Conv2d(3, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    (1): BatchNorm2d(32, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    (2): ReLU(inplace=True)
+    (3): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+  )
+  (conv2): Sequential(
+    (0): Conv2d(32, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    (2): ReLU()
+    (3): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+  )
+  (conv3): Sequential(
+    (0): Conv2d(64, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+    (1): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    (2): ReLU()
+    (3): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
+  )
+  (flatten): Flatten(start_dim=1, end_dim=-1)
+  (fc): Sequential(
+    (0): Linear(in_features=100352, out_features=512, bias=True)
+    (1): ReLU()
+    (2): Dropout(p=0.5, inplace=False)
+    (3): Linear(in_features=512, out_features=4, bias=True)
+  )
+)
+Egitim basliyor...
+Epoch 1/50 | Train Loss: 8.9528 Acc: 25.21% | Val Loss: 1.3679 Acc: 25.83%
+  --> Model Kaydedildi (Loss düştü)
+Epoch 2/50 | Train Loss: 1.3610 Acc: 24.86% | Val Loss: 1.3325 Acc: 32.00%
+  --> Model Kaydedildi (Loss düştü)
+Epoch 3/50 | Train Loss: 1.3478 Acc: 30.18% | Val Loss: 1.3121 Acc: 32.83%
+  --> Model Kaydedildi (Loss düştü)
+Epoch 4/50 | Train Loss: 1.3345 Acc: 31.39% | Val Loss: 1.3195 Acc: 32.83%
+  --> İyileşme yok. Sabır: 1/5
+Epoch 5/50 | Train Loss: 1.3224 Acc: 33.89% | Val Loss: 1.3370 Acc: 30.67%
+  --> İyileşme yok. Sabır: 2/5
+Epoch 6/50 | Train Loss: 1.3253 Acc: 31.29% | Val Loss: 1.3456 Acc: 29.17%
+  --> İyileşme yok. Sabır: 3/5
+Epoch 7/50 | Train Loss: 1.3207 Acc: 31.96% | Val Loss: 1.3239 Acc: 31.33%
+  --> İyileşme yok. Sabır: 4/5
+Epoch 8/50 | Train Loss: 1.3132 Acc: 31.68% | Val Loss: 1.2901 Acc: 32.67%
+  --> Model Kaydedildi (Loss düştü)
+Epoch 9/50 | Train Loss: 1.2956 Acc: 32.39% | Val Loss: 1.2902 Acc: 33.00%
+  --> İyileşme yok. Sabır: 1/5
+Epoch 10/50 | Train Loss: 1.2930 Acc: 34.29% | Val Loss: 1.2913 Acc: 34.00%
+  --> İyileşme yok. Sabır: 2/5
+Epoch 11/50 | Train Loss: 1.2917 Acc: 34.39% | Val Loss: 1.2869 Acc: 34.17%
+  --> Model Kaydedildi (Loss düştü)
+Epoch 12/50 | Train Loss: 1.2839 Acc: 34.07% | Val Loss: 1.2915 Acc: 31.83%
+  --> İyileşme yok. Sabır: 1/5
+Epoch 13/50 | Train Loss: 1.2805 Acc: 35.21% | Val Loss: 1.2912 Acc: 30.67%
+  --> İyileşme yok. Sabır: 2/5
+Epoch 14/50 | Train Loss: 1.2727 Acc: 35.21% | Val Loss: 1.2862 Acc: 33.67%
+  --> Model Kaydedildi (Loss düştü)
+Epoch 15/50 | Train Loss: 1.2730 Acc: 35.93% | Val Loss: 1.2939 Acc: 31.00%
+  --> İyileşme yok. Sabır: 1/5
+Epoch 16/50 | Train Loss: 1.2736 Acc: 36.61% | Val Loss: 1.2858 Acc: 32.50%
+  --> Model Kaydedildi (Loss düştü)
+Epoch 17/50 | Train Loss: 1.2704 Acc: 36.04% | Val Loss: 1.2900 Acc: 33.67%
+  --> İyileşme yok. Sabır: 1/5
+Epoch 18/50 | Train Loss: 1.2584 Acc: 36.96% | Val Loss: 1.2804 Acc: 33.50%
+  --> Model Kaydedildi (Loss düştü)
+Epoch 19/50 | Train Loss: 1.2618 Acc: 37.25% | Val Loss: 1.2805 Acc: 32.33%
+  --> İyileşme yok. Sabır: 1/5
+Epoch 20/50 | Train Loss: 1.2617 Acc: 36.11% | Val Loss: 1.2829 Acc: 35.00%
+  --> İyileşme yok. Sabır: 2/5
+Epoch 21/50 | Train Loss: 1.2406 Acc: 38.54% | Val Loss: 1.2852 Acc: 32.83%
+  --> İyileşme yok. Sabır: 3/5
+Epoch 22/50 | Train Loss: 1.2470 Acc: 36.36% | Val Loss: 1.2786 Acc: 33.50%
+  --> Model Kaydedildi (Loss düştü)
+Epoch 23/50 | Train Loss: 1.2455 Acc: 37.14% | Val Loss: 1.2745 Acc: 37.17%
+  --> Model Kaydedildi (Loss düştü)
+Epoch 24/50 | Train Loss: 1.2357 Acc: 38.25% | Val Loss: 1.2674 Acc: 33.83%
+  --> Model Kaydedildi (Loss düştü)
+Epoch 25/50 | Train Loss: 1.2343 Acc: 37.04% | Val Loss: 1.2617 Acc: 36.67%
+  --> Model Kaydedildi (Loss düştü)
+Epoch 26/50 | Train Loss: 1.2260 Acc: 37.86% | Val Loss: 1.2653 Acc: 36.67%
+  --> İyileşme yok. Sabır: 1/5
+Epoch 27/50 | Train Loss: 1.2160 Acc: 38.21% | Val Loss: 1.2560 Acc: 38.17%
+  --> Model Kaydedildi (Loss düştü)
+Epoch 28/50 | Train Loss: 1.2102 Acc: 40.43% | Val Loss: 1.2566 Acc: 37.50%
+  --> İyileşme yok. Sabır: 1/5
+Epoch 29/50 | Train Loss: 1.2082 Acc: 38.64% | Val Loss: 1.2545 Acc: 39.67%
+  --> Model Kaydedildi (Loss düştü)
+Epoch 30/50 | Train Loss: 1.1967 Acc: 40.21% | Val Loss: 1.2489 Acc: 39.83%
+  --> Model Kaydedildi (Loss düştü)
+Epoch 31/50 | Train Loss: 1.1832 Acc: 42.18% | Val Loss: 1.2447 Acc: 38.50%
+  --> Model Kaydedildi (Loss düştü)
+Epoch 32/50 | Train Loss: 1.1752 Acc: 41.43% | Val Loss: 1.2470 Acc: 39.83%
+  --> İyileşme yok. Sabır: 1/5
+Epoch 33/50 | Train Loss: 1.1606 Acc: 42.82% | Val Loss: 1.2440 Acc: 40.67%
+  --> Model Kaydedildi (Loss düştü)
+Epoch 34/50 | Train Loss: 1.1553 Acc: 43.64% | Val Loss: 1.2371 Acc: 41.67%
+  --> Model Kaydedildi (Loss düştü)
+Epoch 35/50 | Train Loss: 1.1377 Acc: 43.89% | Val Loss: 1.2445 Acc: 39.83%
+  --> İyileşme yok. Sabır: 1/5
+Epoch 36/50 | Train Loss: 1.1433 Acc: 44.04% | Val Loss: 1.2483 Acc: 39.83%
+  --> İyileşme yok. Sabır: 2/5
+Epoch 37/50 | Train Loss: 1.1287 Acc: 45.71% | Val Loss: 1.2321 Acc: 41.00%
+  --> Model Kaydedildi (Loss düştü)
+Epoch 38/50 | Train Loss: 1.1194 Acc: 45.96% | Val Loss: 1.2418 Acc: 41.17%
+  --> İyileşme yok. Sabır: 1/5
+Epoch 39/50 | Train Loss: 1.1059 Acc: 46.61% | Val Loss: 1.2355 Acc: 42.00%
+  --> İyileşme yok. Sabır: 2/5
+Epoch 40/50 | Train Loss: 1.1027 Acc: 45.86% | Val Loss: 1.2590 Acc: 40.50%
+  --> İyileşme yok. Sabır: 3/5
+Epoch 41/50 | Train Loss: 1.0919 Acc: 47.86% | Val Loss: 1.2492 Acc: 42.00%
+  --> İyileşme yok. Sabır: 4/5
+Epoch 42/50 | Train Loss: 1.0660 Acc: 48.61% | Val Loss: 1.2553 Acc: 42.17%
+  --> İyileşme yok. Sabır: 5/5
+Early Stopping tetiklendi! Eğitim durduruluyor.
+Eğitim tamamlandı!
+c:\Users\MONSTER\Documents\GitHub\dog-emotions-deep-learning\main.py:236: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  model.load_state_dict(torch.load('best_model.pth'))
+Classification Report:
+              precision    recall  f1-score   support
+
+       angry       0.45      0.15      0.22       172
+       happy       0.39      0.51      0.45       136
+     relaxed       0.36      0.50      0.42       142
+         sad       0.42      0.47      0.44       150
+
+    accuracy                           0.39       600
+   macro avg       0.40      0.41      0.38       600
+weighted avg       0.41      0.39      0.37       600
+
+Accuracy (Doğruluk): $\%39$. Rastgele sallasak $\%25$ tuttururduk. Yani model bir şeyler öğreniyor ama yeterli değil.
+
+Overfitting (Ezberleme): Train Accuracy yükselmeye devam ediyor ($\%48$'lere çıkmış), ama Validation Accuracy $\%40$'larda takılıp kalmış. Hatta Loss grafiğinde Validation Loss hafiften artmaya başlamış. Bu, modelin veriyi ezberlemeye başladığının kanıtı.
+
+Sınıf Karışıklığı: Modelin en büyük sorunu 'Angry' (Kızgın) sınıfı ile. 172 kızgın köpekten sadece 25'ini bilmiş!Angry olanları en çok Sad (Üzgün) (74 adet) sanmış. 
+
+

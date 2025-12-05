@@ -22,6 +22,7 @@ LABELS_CSV = "labels.csv"           # DATA_DIR altında
 OUTPUT_DIR = "outputs"
 MODEL_PATH = os.path.join(OUTPUT_DIR, "best_model.pt")
 
+# Hyperparameters
 IMAGE_SIZE = 128
 BATCH_SIZE = 64
 NUM_EPOCHS = 50
@@ -113,14 +114,7 @@ class SimpleCNN(nn.Module):
         return x
 
 # 4. Device seçimi
-if torch.backends.mps.is_available():
-    device = torch.device("mps")
-elif torch.cuda.is_available():
-    device = torch.device("cuda")
-else:
-    device = torch.device("cpu")
-
-print("Using device:", device)
+from gpu_test import device                                         # gpu_test.py dosyasından device bilgisini alacagim icin ekledim
 
 # 5. Dataset
 class DogEmotionDataset(Dataset):
@@ -165,31 +159,45 @@ class DogEmotionDataset(Dataset):
 
         return image, label
 
-# ==============================
-# 6. Dataloaders
-# ==============================
-def get_dataloaders():
-    csv_path = os.path.join(DATA_DIR, LABELS_CSV)
-    if not os.path.exists(csv_path):
-        raise FileNotFoundError(f"labels.csv bulunamadı: {csv_path}")
+# 6. Veri yükleme ve ön işleme
 
+class SubsetWithTransform(Dataset):
+
+    def __init__(self, subset, transform=None):
+        self.subset = subset
+        self.transform = transform
+
+    def __getitem__(self, index):
+        x, y = self.subset[index]
+        if self.transform:
+            x = self.transform(x)
+        return x, y
+
+    def __len__(self):
+        return len(self.subset)
+
+def get_dataloaders_fixed():
+    csv_path = os.path.join(DATA_DIR, LABELS_CSV)
+    
+    # Transformlar
     train_transform = transforms.Compose([
         transforms.Resize((IMAGE_SIZE, IMAGE_SIZE)),
         transforms.RandomHorizontalFlip(),
-        transforms.RandomRotation(10),
-        transforms.ColorJitter(brightness=0.1, contrast=0.1),
+        transforms.RandomRotation(15),
+        transforms.ColorJitter(brightness=0.2, contrast=0.2),
         transforms.ToTensor(),
-        transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                             std=[0.229, 0.224, 0.225]),
+        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
     ])
 
     val_test_transform = transforms.Compose([
         transforms.Resize((IMAGE_SIZE, IMAGE_SIZE)),
         transforms.ToTensor(),
-        transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                             std=[0.229, 0.224, 0.225]),
+        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
     ])
 
+    # Ham dataset (transformsuz yükle)
+    # Not: Dataset sınıfındaki __getitem__ içindeki transform satırını kaldırman gerekebilir 
+    # ya da None yolladığımız için sorun çıkmaz.
     full_dataset = DogEmotionDataset(csv_path=csv_path, root_dir=DATA_DIR, transform=None)
 
     total_len = len(full_dataset)
@@ -197,20 +205,183 @@ def get_dataloaders():
     val_len = int(0.15 * total_len)
     test_len = total_len - train_len - val_len
 
-    train_dataset, val_dataset, test_dataset = random_split(
-        full_dataset,
-        lengths=[train_len, val_len, test_len],
-        generator=torch.Generator().manual_seed(42),
+    # Bölme işlemi
+    train_subset, val_subset, test_subset = random_split(
+        full_dataset, [train_len, val_len, test_len],
+        generator=torch.Generator().manual_seed(42)
     )
 
-    train_dataset.dataset.transform = train_transform
-    val_dataset.dataset.transform = val_test_transform
-    test_dataset.dataset.transform = val_test_transform
+    # Wrapper ile transformları ata
+    train_dataset = SubsetWithTransform(train_subset, transform=train_transform)
+    val_dataset   = SubsetWithTransform(val_subset, transform=val_test_transform)
+    test_dataset  = SubsetWithTransform(test_subset, transform=val_test_transform)
 
+    # Loaderlar
     train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=0)
-    val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=0)
-    test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=0)
+    val_loader   = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=0)
+    test_loader  = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=0)
 
-    idx_to_class = full_dataset.idx_to_label
+    return train_loader, val_loader, test_loader, full_dataset.idx_to_label
 
-    return train_loader, val_loader, test_loader, idx_to_class
+# 7. Training & Evaluation Loops
+
+def train_epoch(model, loader, criterion, optimizer, device):
+    model.train() # Modeli eğitim moduna al
+    running_loss = 0.0
+    correct = 0
+    total = 0
+
+    # Tqdm ile ilerleme çubuğu
+    loop = tqdm(loader, leave=False)
+    for images, labels in loop:
+        images, labels = images.to(device), labels.to(device)
+
+        # 1. Forward
+        outputs = model(images)
+        loss = criterion(outputs, labels)
+
+        # 2. Backward
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+
+        # İstatistikler
+        running_loss += loss.item()
+        _, predicted = torch.max(outputs.data, 1)
+        total += labels.size(0)
+        correct += (predicted == labels).sum().item()
+
+        # Progress bar güncelle
+        loop.set_description(f"Train Loss: {loss.item():.4f}")
+
+    avg_loss = running_loss / len(loader)
+    accuracy = 100 * correct / total
+    return avg_loss, accuracy
+
+def evaluate(model, loader, criterion, device):
+    model.eval() # Modeli değerlendirme moduna al (Dropout kapanır vs.)
+    running_loss = 0.0
+    correct = 0
+    total = 0
+
+    with torch.no_grad(): # Gradyan hesaplama yok (Hafıza tasarrufu)
+        for images, labels in loader:
+            images, labels = images.to(device), labels.to(device)
+
+            outputs = model(images)
+            loss = criterion(outputs, labels)
+
+            running_loss += loss.item()
+            _, predicted = torch.max(outputs.data, 1)
+            total += labels.size(0)
+            correct += (predicted == labels).sum().item()
+
+    avg_loss = running_loss / len(loader)
+    accuracy = 100 * correct / total
+    return avg_loss, accuracy
+
+# 8. Main Execution
+
+def main():
+    # Klasör oluştur
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+    # 1. Veriyi Yükle
+    print("Veri yükleniyor...")
+    train_loader, val_loader, test_loader, idx_to_class = get_dataloaders_fixed()
+    num_classes = len(idx_to_class)
+    print(f"Sınıflar: {idx_to_class}")
+    print(f"Eğitim: {len(train_loader.dataset)}, Val: {len(val_loader.dataset)}, Test: {len(test_loader.dataset)}")
+
+    # 2. Modeli Başlat
+    model = SimpleCNN(num_classes=num_classes).to(device)
+    
+    # Loss ve Optimizer
+    criterion = nn.CrossEntropyLoss()
+    optimizer = optim.Adam(model.parameters(), lr=LEARNING_RATE, weight_decay=WEIGHT_DECAY)
+    
+    # Learning Rate Scheduler (Opsiyonel ama önerilir: Loss düşmezse LR azaltır)
+    scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=5)
+
+    # 3. Eğitim Döngüsü
+    best_val_loss = float('inf')
+    history = {'train_loss': [], 'train_acc': [], 'val_loss': [], 'val_acc': []}
+
+    print(f"\nEğitim başlıyor... ({NUM_EPOCHS} Epoch)")
+    
+    for epoch in range(NUM_EPOCHS):
+        # Train
+        train_loss, train_acc = train_epoch(model, train_loader, criterion, optimizer, device)
+        
+        # Validation
+        val_loss, val_acc = evaluate(model, val_loader, criterion, device)
+        
+        # LR Scheduler güncelle
+        scheduler.step(val_loss)
+
+        # Kayıt tut
+        history['train_loss'].append(train_loss)
+        history['train_acc'].append(train_acc)
+        history['val_loss'].append(val_loss)
+        history['val_acc'].append(val_acc)
+
+        # En iyi modeli kaydet
+        if val_loss < best_val_loss:
+            best_val_loss = val_loss
+            torch.save(model.state_dict(), MODEL_PATH)
+            saved_msg = "-> Model Kaydedildi!"
+        else:
+            saved_msg = ""
+
+        print(f"Epoch [{epoch+1}/{NUM_EPOCHS}] "
+              f"Train Loss: {train_loss:.4f} Acc: {train_acc:.2f}% | "
+              f"Val Loss: {val_loss:.4f} Acc: {val_acc:.2f}% {saved_msg}")
+
+    # 4. Sonuçları Görselleştir
+    plt.figure(figsize=(12, 5))
+    
+    # Loss Grafiği
+    plt.subplot(1, 2, 1)
+    plt.plot(history['train_loss'], label='Train Loss')
+    plt.plot(history['val_loss'], label='Val Loss')
+    plt.title('Loss Over Epochs')
+    plt.xlabel('Epoch')
+    plt.ylabel('Loss')
+    plt.legend()
+
+    # Accuracy Grafiği
+    plt.subplot(1, 2, 2)
+    plt.plot(history['train_acc'], label='Train Acc')
+    plt.plot(history['val_acc'], label='Val Acc')
+    plt.title('Accuracy Over Epochs')
+    plt.xlabel('Epoch')
+    plt.ylabel('Accuracy (%)')
+    plt.legend()
+    
+    plt.savefig(os.path.join(OUTPUT_DIR, 'training_results.png'))
+    print(f"\nGrafikler {OUTPUT_DIR} klasörüne kaydedildi.")
+    plt.show()
+
+    # 5. Test Seti ile Final Değerlendirme
+    print("\nTest seti üzerinde en iyi model değerlendiriliyor...")
+    model.load_state_dict(torch.load(MODEL_PATH)) # En iyi ağırlıkları yükle
+    test_loss, test_acc = evaluate(model, test_loader, criterion, device)
+    print(f"Test Accuracy: {test_acc:.2f}%")
+
+    # Confusion Matrix (Opsiyonel Detay)
+    all_preds = []
+    all_labels = []
+    model.eval()
+    with torch.no_grad():
+        for images, labels in test_loader:
+            images = images.to(device)
+            outputs = model(images)
+            _, preds = torch.max(outputs, 1)
+            all_preds.extend(preds.cpu().numpy())
+            all_labels.extend(labels.cpu().numpy())
+    
+    print("\nSınıflandırma Raporu:")
+    print(classification_report(all_labels, all_preds, target_names=list(idx_to_class.values())))
+
+if __name__ == "__main__":
+    main()
