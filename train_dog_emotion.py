@@ -16,7 +16,9 @@ from sklearn.metrics import classification_report, confusion_matrix, ConfusionMa
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 
+# ==============================
 # 0. Config
+# ==============================
 DATA_DIR = "data/Dog Emotion"       # labels.csv + görüntülerin bulunduğu ana klasör
 LABELS_CSV = "labels.csv"           # DATA_DIR altında
 OUTPUT_DIR = "outputs"
@@ -28,7 +30,10 @@ NUM_EPOCHS = 50
 LEARNING_RATE = 1e-3
 WEIGHT_DECAY = 1e-4  # L2 regularization
 
+
+# ==============================
 # 1. Reproducibility
+# ==============================
 def set_seed(seed: int = 42):
     random.seed(seed)
     np.random.seed(seed)
@@ -42,7 +47,10 @@ def set_seed(seed: int = 42):
 
 set_seed(42)
 
+
+# ==============================
 # 2. Baseline model (Tiny CNN)
+# ==============================
 class TinyBaselineCNN(nn.Module):
     """
     Çok basit, 2 convolution katmanlı baseline model.
@@ -69,7 +77,10 @@ class TinyBaselineCNN(nn.Module):
         x = x.view(x.size(0), -1)
         return self.fc(x)
 
+
+# ==============================
 # 3. Ana model
+# ==============================
 class SimpleCNN(nn.Module):
     def __init__(self, num_classes: int = 4):
         super(SimpleCNN, self).__init__()
@@ -112,7 +123,10 @@ class SimpleCNN(nn.Module):
         x = self.classifier(x)
         return x
 
+
+# ==============================
 # 4. Device seçimi
+# ==============================
 if torch.backends.mps.is_available():
     device = torch.device("mps")
 elif torch.cuda.is_available():
@@ -122,7 +136,10 @@ else:
 
 print("Using device:", device)
 
+
+# ==============================
 # 5. Dataset
+# ==============================
 class DogEmotionDataset(Dataset):
     def __init__(self, csv_path, root_dir, transform=None):
         """
@@ -164,3 +181,54 @@ class DogEmotionDataset(Dataset):
             image = self.transform(image)
 
         return image, label
+
+
+# ==============================
+# 6. Dataloaders
+# ==============================
+def get_dataloaders():
+    csv_path = os.path.join(DATA_DIR, LABELS_CSV)
+    if not os.path.exists(csv_path):
+        raise FileNotFoundError(f"labels.csv bulunamadı: {csv_path}")
+
+    train_transform = transforms.Compose([
+        transforms.Resize((IMAGE_SIZE, IMAGE_SIZE)),
+        transforms.RandomHorizontalFlip(),
+        transforms.RandomRotation(10),
+        transforms.ColorJitter(brightness=0.1, contrast=0.1),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                             std=[0.229, 0.224, 0.225]),
+    ])
+
+    val_test_transform = transforms.Compose([
+        transforms.Resize((IMAGE_SIZE, IMAGE_SIZE)),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                             std=[0.229, 0.224, 0.225]),
+    ])
+
+    full_dataset = DogEmotionDataset(csv_path=csv_path, root_dir=DATA_DIR, transform=None)
+
+    total_len = len(full_dataset)
+    train_len = int(0.7 * total_len)
+    val_len = int(0.15 * total_len)
+    test_len = total_len - train_len - val_len
+
+    train_dataset, val_dataset, test_dataset = random_split(
+        full_dataset,
+        lengths=[train_len, val_len, test_len],
+        generator=torch.Generator().manual_seed(42),
+    )
+
+    train_dataset.dataset.transform = train_transform
+    val_dataset.dataset.transform = val_test_transform
+    test_dataset.dataset.transform = val_test_transform
+
+    train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=True, num_workers=0)
+    val_loader = DataLoader(val_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=0)
+    test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE, shuffle=False, num_workers=0)
+
+    idx_to_class = full_dataset.idx_to_label
+
+    return train_loader, val_loader, test_loader, idx_to_class
