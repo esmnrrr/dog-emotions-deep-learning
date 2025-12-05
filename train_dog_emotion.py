@@ -34,8 +34,12 @@ WEIGHT_DECAY = 1e-4  # L2 regularization
 # ==============================
 # 1. Reproducibility
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 # ==============================
 def set_seed(seed: int = 42):
+=======
+def set_seed(seed: int = 42):                                   # zar atma olayini sabitliyorum
+>>>>>>> Stashed changes
 =======
 def set_seed(seed: int = 42):                                   # zar atma olayini sabitliyorum
 >>>>>>> Stashed changes
@@ -55,8 +59,12 @@ set_seed(42)
 # ==============================
 # 2. Baseline model (Tiny CNN)
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 # ==============================
 class TinyBaselineCNN(nn.Module):
+=======
+class TinyBaselineCNN(nn.Module):                                   # veri akisi saglaniyor mu diye kontrol amacli basit model kurdum 
+>>>>>>> Stashed changes
 =======
 class TinyBaselineCNN(nn.Module):                                   # veri akisi saglaniyor mu diye kontrol amacli basit model kurdum 
 >>>>>>> Stashed changes
@@ -190,6 +198,7 @@ class DogEmotionDataset(Dataset):
 
         return image, label
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 
 
 # ==============================
@@ -241,6 +250,9 @@ def get_dataloaders():
     idx_to_class = full_dataset.idx_to_label
 
     return train_loader, val_loader, test_loader, idx_to_class
+=======
+    
+>>>>>>> Stashed changes
 =======
     
 >>>>>>> Stashed changes
