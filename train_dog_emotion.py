@@ -33,8 +33,12 @@ WEIGHT_DECAY = 1e-4  # L2 regularization
 
 # ==============================
 # 1. Reproducibility
+<<<<<<< Updated upstream
 # ==============================
 def set_seed(seed: int = 42):
+=======
+def set_seed(seed: int = 42):                                   # zar atma olayini sabitliyorum
+>>>>>>> Stashed changes
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
@@ -50,8 +54,12 @@ set_seed(42)
 
 # ==============================
 # 2. Baseline model (Tiny CNN)
+<<<<<<< Updated upstream
 # ==============================
 class TinyBaselineCNN(nn.Module):
+=======
+class TinyBaselineCNN(nn.Module):                                   # veri akisi saglaniyor mu diye kontrol amacli basit model kurdum 
+>>>>>>> Stashed changes
     """
     Çok basit, 2 convolution katmanlı baseline model.
     Sadece karşılaştırma için kullanılıyor.
@@ -87,10 +95,10 @@ class SimpleCNN(nn.Module):
 
         self.features = nn.Sequential(
             # Block 1
-            nn.Conv2d(3, 32, kernel_size=3, padding=1),
-            nn.BatchNorm2d(32),
-            nn.ReLU(inplace=True),
-            nn.MaxPool2d(2),  # 128 -> 64
+            nn.Conv2d(3, 32, kernel_size=3, padding=1),                             # kenar koseleri tespit ediyorum
+            nn.BatchNorm2d(32),                                                     # trainingde sayıların çok büyümesini veya küçülmesini engelliyorum
+            nn.ReLU(inplace=True),                                                  # non linear lik ekliyorum
+            nn.MaxPool2d(2),  # 128 -> 64                                           # resmi yarıya indiriyorum
 
             # Block 2
             nn.Conv2d(32, 64, kernel_size=3, padding=1),
@@ -111,7 +119,7 @@ class SimpleCNN(nn.Module):
             nn.MaxPool2d(2),  # 16 -> 8
         )
 
-        self.dropout = nn.Dropout(p=0.5)
+        self.dropout = nn.Dropout(p=0.5)                                            # overfittingi engellemek icin noronlarin yarisini egitim sirasinda kapatiyorum
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
         self.classifier = nn.Linear(256, num_classes)
 
@@ -171,7 +179,7 @@ class DogEmotionDataset(Dataset):
     def __len__(self):
         return len(self.img_paths)
 
-    def __getitem__(self, idx):
+    def __getitem__(self, idx):                                                     # veri setinden bir örnek alıyorum
         img_path = self.img_paths[idx]
         label = self.labels[idx]
 
@@ -181,6 +189,7 @@ class DogEmotionDataset(Dataset):
             image = self.transform(image)
 
         return image, label
+<<<<<<< Updated upstream
 
 
 # ==============================
@@ -232,3 +241,6 @@ def get_dataloaders():
     idx_to_class = full_dataset.idx_to_label
 
     return train_loader, val_loader, test_loader, idx_to_class
+=======
+    
+>>>>>>> Stashed changes
