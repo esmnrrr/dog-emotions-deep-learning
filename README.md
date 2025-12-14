@@ -139,3 +139,54 @@ Overfitting (Ezberleme): Train Accuracy yükselmeye devam ediyor ($\%48$'lere ç
 Sınıf Karışıklığı: Modelin en büyük sorunu 'Angry' (Kızgın) sınıfı ile. 172 kızgın köpekten sadece 25'ini bilmiş!Angry olanları en çok Sad (Üzgün) (74 adet) sanmış. 
 
 
+
+
+model mimarisini cnn den transfer learning e cekince cikan sonuc:
+
+Egitim basliyor...
+Epoch 1/15 | Train Loss: 0.9513 Acc: 62.18% | Val Loss: 0.9473 Acc: 59.17%
+Epoch 2/15 | Train Loss: 0.6418 Acc: 74.46% | Val Loss: 0.6845 Acc: 71.83%
+Epoch 3/15 | Train Loss: 0.5303 Acc: 79.61% | Val Loss: 0.7852 Acc: 69.33%
+Epoch 4/15 | Train Loss: 0.3990 Acc: 85.32% | Val Loss: 1.3053 Acc: 59.67%
+Epoch 5/15 | Train Loss: 0.3210 Acc: 88.04% | Val Loss: 0.8570 Acc: 71.67%
+Epoch 6/15 | Train Loss: 0.2363 Acc: 92.21% | Val Loss: 0.8097 Acc: 73.00%
+Epoch 7/15 | Train Loss: 0.1861 Acc: 93.25% | Val Loss: 1.0097 Acc: 69.67%
+Epoch 8/15 | Train Loss: 0.1741 Acc: 94.57% | Val Loss: 1.2212 Acc: 70.17%
+Epoch 9/15 | Train Loss: 0.1860 Acc: 93.86% | Val Loss: 0.8110 Acc: 73.83%
+Epoch 10/15 | Train Loss: 0.1761 Acc: 93.71% | Val Loss: 1.3423 Acc: 66.67%
+Epoch 10/15 | Train Loss: 0.1761 Acc: 93.71% | Val Loss: 1.3423 Acc: 66.67%
+Epoch 11/15 | Train Loss: 0.1590 Acc: 94.29% | Val Loss: 0.9954 Acc: 73.50%
+Epoch 11/15 | Train Loss: 0.1590 Acc: 94.29% | Val Loss: 0.9954 Acc: 73.50%
+Epoch 12/15 | Train Loss: 0.0864 Acc: 97.14% | Val Loss: 1.0824 Acc: 71.50%
+Epoch 13/15 | Train Loss: 0.1098 Acc: 95.96% | Val Loss: 0.9572 Acc: 71.67%
+Egitim tamamlandi!
+Model kaydedildi.
+
+
+
+
+overfittingi iyilestirmenin sonucu:
+
+Egitim basliyor...
+Epoch 1/20 | Train Loss: 0.8926 Acc: 62.96% | Val Loss: 0.4924 Acc: 80.50%
+Epoch 2/20 | Train Loss: 0.3075 Acc: 89.04% | Val Loss: 0.4440 Acc: 83.67%
+Epoch 3/20 | Train Loss: 0.1036 Acc: 97.18% | Val Loss: 0.4925 Acc: 84.67%
+Epoch 4/20 | Train Loss: 0.0472 Acc: 99.29% | Val Loss: 0.4957 Acc: 84.17%
+Epoch 5/20 | Train Loss: 0.0226 Acc: 99.86% | Val Loss: 0.4632 Acc: 85.50%
+Epoch 6/20 | Train Loss: 0.0182 Acc: 99.82% | Val Loss: 0.4951 Acc: 85.00%
+Epoch 7/20 | Train Loss: 0.0110 Acc: 99.93% | Val Loss: 0.4578 Acc: 86.00%
+Epoch 8/20 | Train Loss: 0.0093 Acc: 99.93% | Val Loss: 0.4586 Acc: 86.00%
+Epoch 9/20 | Train Loss: 0.0094 Acc: 99.93% | Val Loss: 0.4776 Acc: 86.67%
+Epoch 10/20 | Train Loss: 0.0084 Acc: 99.96% | Val Loss: 0.4624 Acc: 86.83%
+Epoch 11/20 | Train Loss: 0.0060 Acc: 100.00% | Val Loss: 0.4814 Acc: 86.17%
+Epoch 12/20 | Train Loss: 0.0082 Acc: 99.96% | Val Loss: 0.4530 Acc: 86.33%
+Epoch 13/20 | Train Loss: 0.0062 Acc: 100.00% | Val Loss: 0.4653 Acc: 86.83%
+Epoch 14/20 | Train Loss: 0.0073 Acc: 99.96% | Val Loss: 0.4841 Acc: 86.00%
+Epoch 15/20 | Train Loss: 0.0061 Acc: 99.96% | Val Loss: 0.4574 Acc: 86.33%
+Epoch 16/20 | Train Loss: 0.0071 Acc: 100.00% | Val Loss: 0.4596 Acc: 86.50%
+Epoch 17/20 | Train Loss: 0.0066 Acc: 100.00% | Val Loss: 0.4696 Acc: 86.50%
+Epoch 18/20 | Train Loss: 0.0072 Acc: 99.96% | Val Loss: 0.4678 Acc: 86.67%
+Epoch 19/20 | Train Loss: 0.0081 Acc: 99.96% | Val Loss: 0.4766 Acc: 86.50%
+Epoch 20/20 | Train Loss: 0.0061 Acc: 100.00% | Val Loss: 0.4470 Acc: 86.50%
+Egitim tamamlandi!
+Model kaydedildi.
