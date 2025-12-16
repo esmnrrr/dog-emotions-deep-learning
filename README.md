@@ -190,3 +190,31 @@ Epoch 19/20 | Train Loss: 0.0081 Acc: 99.96% | Val Loss: 0.4766 Acc: 86.50%
 Epoch 20/20 | Train Loss: 0.0061 Acc: 100.00% | Val Loss: 0.4470 Acc: 86.50%
 Egitim tamamlandi!
 Model kaydedildi.
+
+
+resnet freezıng ekledım
+
+Egitim basliyor...
+Epoch 1/20 | Train Loss: 1.3040 Acc: 39.57% | Val Loss: 1.1469 Acc: 47.50%
+Epoch 2/20 | Train Loss: 1.1564 Acc: 48.46% | Val Loss: 0.9999 Acc: 55.67%
+Epoch 3/20 | Train Loss: 1.1218 Acc: 50.86% | Val Loss: 1.0085 Acc: 56.00%
+Epoch 4/20 | Train Loss: 1.0999 Acc: 52.50% | Val Loss: 0.9580 Acc: 59.67%
+Epoch 5/20 | Train Loss: 1.0855 Acc: 53.18% | Val Loss: 0.9629 Acc: 64.33%
+Epoch 6/20 | Train Loss: 1.0665 Acc: 53.46% | Val Loss: 0.9338 Acc: 62.00%
+Epoch 7/20 | Train Loss: 1.0354 Acc: 55.79% | Val Loss: 0.9428 Acc: 63.83%
+Epoch 8/20 | Train Loss: 1.0654 Acc: 54.14% | Val Loss: 0.9302 Acc: 62.67%
+Epoch 9/20 | Train Loss: 1.0546 Acc: 54.86% | Val Loss: 0.9689 Acc: 61.00%
+Epoch 10/20 | Train Loss: 1.0450 Acc: 54.93% | Val Loss: 0.9688 Acc: 61.67%
+Epoch 11/20 | Train Loss: 1.0230 Acc: 55.82% | Val Loss: 0.9063 Acc: 62.50%
+Epoch 12/20 | Train Loss: 1.0318 Acc: 54.71% | Val Loss: 0.9487 Acc: 62.33%
+Epoch 13/20 | Train Loss: 1.0361 Acc: 55.50% | Val Loss: 0.9211 Acc: 63.50%
+Epoch 14/20 | Train Loss: 1.0251 Acc: 55.43% | Val Loss: 0.9291 Acc: 62.67%
+Epoch 15/20 | Train Loss: 1.0066 Acc: 57.61% | Val Loss: 0.8997 Acc: 64.17%
+Epoch 16/20 | Train Loss: 1.0153 Acc: 55.96% | Val Loss: 0.9156 Acc: 63.50%
+Epoch 17/20 | Train Loss: 1.0152 Acc: 56.54% | Val Loss: 0.9409 Acc: 62.67%
+Epoch 18/20 | Train Loss: 1.0153 Acc: 56.25% | Val Loss: 0.8873 Acc: 65.67%
+Epoch 19/20 | Train Loss: 0.9890 Acc: 58.29% | Val Loss: 0.9275 Acc: 62.50%
+Epoch 20/20 | Train Loss: 1.0043 Acc: 56.11% | Val Loss: 0.9301 Acc: 62.17%
+Egitim tamamlandi!
+Model kaydedildi.
+
