@@ -62,25 +62,27 @@ train_loader = DataLoader(train_data, batch_size=BATCH_SIZE, shuffle=True)
 val_loader = DataLoader(val_data, batch_size=BATCH_SIZE, shuffle=False)
 test_loader = DataLoader(test_data, batch_size=BATCH_SIZE, shuffle=False)
 
-# --- 3. MODEL MIMARISI (OVERFITTING ÇÖZÜMÜ: FREEZING) ---
-def get_resnet_model(num_classes):                                                                  # RANSFER LERNING KULLANIYORUM AMA OVERFITTINGI ONLEMEK ICIN FREEZING YAPIYORUM
-    print("ResNet18 yükleniyor... Katmanlar donduruluyor (Freezing)...")
-    # Modeli indir
+# --- 3. MODEL MIMARISI (ALTIN ORAN: PARTIAL FREEZING) ---
+def get_resnet_model(num_classes):                                                                  # TRANSFER LEARNING ICIN DUZENLEDIM OVERFITTING OLMASIN DIYE FREEZING YAPTIM AMA UNDERFITTING ICINDE PARTIAL EKLEDIM
+    print("ResNet18 yükleniyor... Partial Freezing uygulanıyor...")
     model = models.resnet18(weights=models.ResNet18_Weights.DEFAULT)
     
-    # freez yapiyoruz ImageNet'ten öğrendiği genel kuralları kullanır
-    for param in model.parameters():
-        param.requires_grad = False 
+    # 1. İLK KATMANLARI DONDUR (Temel özellikler değişmesin)
+    # conv1, bn1, layer1 ve layer2 donduruluyor.
+    for name, child in model.named_children():
+        if name in ['conv1', 'bn1', 'layer1', 'layer2']:
+            for param in child.parameters():
+                param.requires_grad = False
     
-    # 3. Classifier Kısmı (Sadece burası eğitilecek)
+    # Not: layer3 ve layer4 SERBEST (Eğitilecek). 
+    # Bu katmanlar duygu gibi soyut özellikleri öğrenir.
+
+    # 2. Classifier Kısmı (Eski başarılı basit yapıya geri dönüyoruz)
+    # Karmaşık katmanlar yerine Dropout ile sadeleştiriyoruz.
     num_ftrs = model.fc.in_features
-    
     model.fc = nn.Sequential(
-        nn.Dropout(0.6),           # Dropout'u %50'den %60'a çıkardım
-        nn.Linear(num_ftrs, 256),  # Ara bir katman ekledik
-        nn.ReLU(),
-        nn.Dropout(0.5),           # İkinci Dropout
-        nn.Linear(256, num_classes)
+        nn.Dropout(0.5),
+        nn.Linear(num_ftrs, num_classes)
     )
     
     return model
@@ -91,10 +93,7 @@ model = get_resnet_model(num_classes).to(device)                                
 
 # Optimizer ve Loss
 criterion = nn.CrossEntropyLoss()
-# Sadece model.fc (son katman) parametrelerini optimizer'a veriyoruz
-# requires_grad=True olanları filtreliyoruz
-optimizer = optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=1e-3, weight_decay=1e-3)
-# Not: Weight Decay'i 1e-4'ten 1e-3'e çıkardık (Cezalandırmayı artırdık)
+optimizer = optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=LEARNING_RATE, weight_decay=1e-4)
 scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=3, verbose=True)  # Loss düşmezse LR i 0.1 ile çarpıp küçültür
 
 # --- 4. EGITIM DONGUSU ---
