@@ -16,17 +16,14 @@ LEARNING_RATE = 1e-4
 EPOCHS = 20                                                                                         
 IMG_SIZE = 224                                                                                                                                                                           
 
-# --- 2. VERI HAZIRLIGI (GÜÇLENDİRİLMİŞ) ---
+# --- 2. VERI HAZIRLIGI ---
 train_transforms = transforms.Compose([
     transforms.Resize((224, 224)),                                                                  
-    # Rastgele kırpma ve yeniden boyutlandırma (En etkili yöntemlerden biri)
     transforms.RandomResizedCrop(224, scale=(0.8, 1.0)),                                            
     transforms.RandomHorizontalFlip(),
     transforms.RandomRotation(15),
-    # Renklerle oyna (Model rengi ezberlemesin, şekle odaklansın)
     transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1),                  
     transforms.ToTensor(),
-    # ImageNet standartlarına göre normalize et (Transfer learning için şart)
     transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),                             
     transforms.RandomErasing(p=0.5, scale=(0.02, 0.2)) 
 ])                                             

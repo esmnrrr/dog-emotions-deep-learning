@@ -6,28 +6,25 @@ from torchvision import datasets, transforms
 import matplotlib.pyplot as plt
 import os
 
-import torchvision.models as models                                                                 # MODELI IYILESTIRMEK ICIN EKLEDIM    
+import torchvision.models as models                                                               
 
 from gpu_test import device               
 
 # --- 1. AYARLAR (HYPERPARAMETERS) ---
 BATCH_SIZE = 32
-LEARNING_RATE = 1e-4                                                                                # 0.001'den 0.0001'e düşürdüM (Daha hassas öğrenme)
-EPOCHS = 20                                                                                         # Biraz daha uzun sürebilir, ezberlemesi zorlaştı çünkü
-IMG_SIZE = 224                                                                                      # MODELI IYILESTIRMEK ICIN 224 YAPTIM                                                                                      
+LEARNING_RATE = 1e-4                                                                               
+EPOCHS = 20                                                                                         
+IMG_SIZE = 224                                                                                                                                                                         
 
-# --- 2. VERI HAZIRLIGI (GÜÇLENDİRİLMİŞ) ---
+# --- 2. VERI HAZIRLIGI ---
 train_transforms = transforms.Compose([
-    transforms.Resize((224, 224)),                                                                  # ResNet için standart boyut
-    # Rastgele kırpma ve yeniden boyutlandırma (En etkili yöntemlerden biri)
-    transforms.RandomResizedCrop(224, scale=(0.8, 1.0)),                                            # OVERFITTINGI AZALTMAK ICIN EKLEDIM
+    transforms.Resize((224, 224)),                                                                 
+    transforms.RandomResizedCrop(224, scale=(0.8, 1.0)),                                            
     transforms.RandomHorizontalFlip(),
     transforms.RandomRotation(15),
-    # Renklerle oyna (Model rengi ezberlemesin, şekle odaklansın)
-    transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1),                  # RENK OYUNLARI EKLEDIM
+    transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1),                 
     transforms.ToTensor(),
-    # ImageNet standartlarına göre normalize et (Transfer learning için şart)
-    transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),                             # IMAGENET NORMALIZASYONU EKLEDIM
+    transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),                            
     transforms.RandomErasing(p=0.5, scale=(0.02, 0.2))                                              # RESMIN RASTGELE YERLERINI SILIYORUM OVERFITTINGI AZALTMAK ICIN
 ])
 
@@ -77,7 +74,7 @@ def get_resnet_model(num_classes):
     # Classifier Kısmı
     num_ftrs = model.fc.in_features
     model.fc = nn.Sequential(
-        nn.Dropout(0.7),  # Dropout'u %70 yaptık! (Çok agresif koruma)
+        nn.Dropout(0.7),                                                                            # Dropout'u %70 yaptım
         nn.Linear(num_ftrs, num_classes)
     )
     
@@ -89,8 +86,8 @@ model = get_resnet_model(num_classes).to(device)                                
 
 # Optimizer ve Loss
 criterion = nn.CrossEntropyLoss()
-optimizer = optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=1e-4, weight_decay=1e-2)   #ASIRI BUYUK AHIRLIKLARI ENGELLEDIM
-scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=3, verbose=True)  # Loss düşmezse LR i 0.1 ile çarpıp küçültür
+optimizer = optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=1e-4, weight_decay=1e-2)   #ASIRI BUYUK AgIRLIKLARI ENGELLEDIM
+scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=3, verbose=True)  
 
 # --- 4. EGITIM DONGUSU ---
 train_losses, val_losses = [], []
@@ -146,7 +143,7 @@ for epoch in range(EPOCHS):
     val_losses.append(val_loss)
     val_accs.append(val_acc)
 
-    scheduler.step(val_loss)                                                                        # LR scheduler'ı epoch sonunda güncelle 
+    scheduler.step(val_loss)                                                                       
     
     print(f"Epoch {epoch+1}/{EPOCHS} | Train Loss: {epoch_loss:.4f} Acc: {epoch_acc:.2f}% | Val Loss: {val_loss:.4f} Acc: {val_acc:.2f}%")
 

@@ -16,14 +16,13 @@ LEARNING_RATE = 1e-4                                                            
 EPOCHS = 20                                                                                         # Biraz daha uzun sürebilir, ezberlemesi zorlaştı çünkü
 IMG_SIZE = 224                                                                                      # MODELI IYILESTIRMEK ICIN 224 YAPTIM                                                                                      
 
-# --- 2. VERI HAZIRLIGI (GÜÇLENDİRİLMİŞ) ---
+# --- 2. VERI HAZIRLIGI ---
 train_transforms = transforms.Compose([
     transforms.Resize((224, 224)),                                                                  # ResNet için standart boyut
-    # Rastgele kırpma ve yeniden boyutlandırma (En etkili yöntemlerden biri)
+    # Rastgele kırpma ve yeniden boyutlandırma
     transforms.RandomResizedCrop(224, scale=(0.8, 1.0)),                                            # OVERFITTINGI AZALTMAK ICIN EKLEDIM
     transforms.RandomHorizontalFlip(),
     transforms.RandomRotation(15),
-    # Renklerle oyna (Model rengi ezberlemesin, şekle odaklansın)
     transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1),                  # RENK OYUNLARI EKLEDIM
     transforms.ToTensor(),
     # ImageNet standartlarına göre normalize et (Transfer learning için şart)
